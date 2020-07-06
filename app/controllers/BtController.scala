@@ -17,4 +17,8 @@ class BtController @Inject()(val controllerComponents: ControllerComponents,
   def postTest = Action(parse.json) { implicit request: Request[JsValue] =>
     Ok("Got " + (request.body \ "name").as[String])
   }
+
+  def check = TODO // get: get all
+  def erase = TODO // post: rm all
+  def charge = TODO // post: update db
 }
