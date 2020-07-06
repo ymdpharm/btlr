@@ -5,6 +5,7 @@ lazy val root = (project in file("."))
     scalaVersion := "2.12.8",
     libraryDependencies ++= Seq(
       guice,
+      "com.google.firebase" % "firebase-admin" % "6.14.0",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
     )
   )
