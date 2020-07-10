@@ -4,6 +4,7 @@ lazy val root = (project in file("."))
     version := "1.0",
     scalaVersion := "2.12.8",
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
+    scalafmtOnCompile := true,
     libraryDependencies ++= Seq(
       guice,
       "com.google.firebase" % "firebase-admin" % "6.14.0",

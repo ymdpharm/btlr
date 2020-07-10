@@ -2,16 +2,17 @@ package types
 
 import play.api.mvc.Request
 
-case class SlackRequest(token: String,
-                        teamId: String,
-                        teamDomain: String,
-                        channelId: String,
-                        channelName: String,
-                        userId: String,
-                        userName: String,
-                        command: String,
-                        text: String,
-                        responseUrl: String)
+case class SlackRequest(
+    token: String,
+    teamId: String,
+    teamDomain: String,
+    channelId: String,
+    channelName: String,
+    userId: String,
+    userName: String,
+    command: String,
+    text: String,
+    responseUrl: String)
 
 object SlackRequest {
   def apply(request: Request[Map[String, Seq[String]]]): SlackRequest = {

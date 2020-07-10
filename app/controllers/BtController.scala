@@ -11,9 +11,9 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class BtController @Inject()(
-  val controllerComponents: ControllerComponents,
-  config: Configuration,
-  amount: AmountRepository
+    val controllerComponents: ControllerComponents,
+    config: Configuration,
+    amount: AmountRepository
 )(implicit val ec: ExecutionContext)
     extends BaseController
     with play.api.Logging {

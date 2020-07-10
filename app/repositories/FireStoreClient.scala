@@ -11,8 +11,7 @@ trait FireStoreClient {
 }
 
 @Singleton
-class FireStoreClientImpl @Inject()(config: Configuration)
-    extends FireStoreClient {
+class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClient {
   import com.google.auth.oauth2.GoogleCredentials
   import com.google.firebase.FirebaseApp
   import com.google.firebase.FirebaseOptions
