@@ -10,14 +10,14 @@ lazy val root = (project in file("."))
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
     ),
     excludeDependencies ++= Seq(
-      "com.google.protobuf" % "protobuf-java",
+      "com.typesafe.akka" %% "akka-protobuf-v3",
       "commons-logging" % "commons-logging"
     ),
     assemblyJarName := "btlr.jar",
     assemblyMergeStrategy in assembly := {
       case "META-INF/io.netty.versions.properties" => MergeStrategy.first
       case "module-info.class"                     => MergeStrategy.first
-      case "play/reference-overrides.conf"              => MergeStrategy.first
+      case "play/reference-overrides.conf"         => MergeStrategy.first
       case x                                       => (assemblyMergeStrategy in assembly).value(x)
     }
   )
