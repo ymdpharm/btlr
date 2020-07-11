@@ -2,7 +2,7 @@ lazy val root = (project in file("."))
   .settings(
     name := """btlr""",
     version := "1.0",
-    scalaVersion := "2.12.8",
+    scalaVersion := "2.13.3",
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     scalafmtOnCompile := true,
     libraryDependencies ++= Seq(

@@ -8,6 +8,6 @@ RUN apk --no-cache add --update \
 
 EXPOSE 9000
 
-COPY ./target/scala-2.12/btlr.jar /app/
+COPY ./target/scala-2.13/btlr.jar /app/
 
 CMD ["java",  "-jar" , "/app/btlr.jar"]
