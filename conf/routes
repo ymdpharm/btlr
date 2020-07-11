@@ -1,6 +1,3 @@
-GET         /test          controllers.BtController.test
-POST        /test          controllers.BtController.postTest
-
 POST        /check         controllers.BtController.check
 POST        /erase         controllers.BtController.erase
 POST        /charge        controllers.BtController.charge

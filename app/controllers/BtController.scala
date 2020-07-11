@@ -18,24 +18,8 @@ class BtController @Inject()(
     extends BaseController
     with play.api.Logging {
 
-  def test: Action[AnyContent] =
-    Action { request: Request[AnyContent] =>
-      info(request)
-      Ok(parseResponse("hogege")).as(JSON)
-    }
-
   // receive application/x-www-form-urlencoded
   type FormUrlEncoded = Map[String, Seq[String]]
-
-  def postTest: Action[AnyContent] =
-    Action { request: Request[AnyContent] =>
-      info(request)
-      amount
-        .erase("testChannel")
-        .recover(AmountException.recoverToMessage)
-        .map(ans => Ok(parseResponse(ans)).as(JSON))
-        .get
-    }
 
   def check: Action[FormUrlEncoded] =
     Action(parse.formUrlEncoded) { request: Request[FormUrlEncoded] =>
