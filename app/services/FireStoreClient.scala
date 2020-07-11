@@ -24,6 +24,7 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
   private val credentials: GoogleCredentials = GoogleCredentials.getApplicationDefault
   private val options: FirebaseOptions = new FirebaseOptions.Builder()
     .setCredentials(credentials)
+    .setProjectId(config.get[String]("backend.project"))
     .build
 
   FirebaseApp.initializeApp(options)
