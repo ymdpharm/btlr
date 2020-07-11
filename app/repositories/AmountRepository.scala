@@ -3,7 +3,7 @@ package repositories
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Success, Try}
+import scala.util.Try
 
 trait AmountRepository {
   def check(channelId: String): Try[String]
@@ -40,7 +40,7 @@ class AmountRepositoryImpl @Inject()(underlying: FireStoreClient)(implicit val e
     } yield "Ok, erased. :+1:"
 
   private def show(amounts: Map[String, Int]) = {
-    amounts.foldLeft(":eyes: Current balance is ...\r ```") { (x, m) =>
+    amounts.foldLeft("Current balance is ...:eyes: \r ```") { (x, m) =>
       x + "\r" + s"<@${m._1}> => ${m._2}"
     } + "```"
   }
