@@ -5,7 +5,7 @@ Play 2.8 study, with Scala 2.13.3.
     - ${APPLICATION_SECRET}
     - ${GOOGLE_APPLICATION_CREDENTIALS} + credential
 - deploy
-    - `sbt assebly` -> `docker build` -> push to `gcr.io/hoge`  -> Cloud Run pochi
+    - `sbt assembly` -> `docker build` -> push to `gcr.io/hoge`  -> Cloud Run pochi
 - request
     - Slack App -> API server on Cloud Run -> Firestore 
 
