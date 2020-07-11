@@ -2,25 +2,47 @@ package repositories
 
 import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.{ExecutionContext, Future}
-
-case class Amount(user: String, amount: Int)
+import scala.concurrent.ExecutionContext
+import scala.util.{Success, Try}
 
 trait AmountRepository {
-  def getAll(channelId: String): Future[String]
-  def store(channelId: String, userId: String, amount: Int): Future[String]
-  def deleteAll(channelId: String): Future[String]
+  def check(channelId: String): Try[String]
+  def charge(channelId: String, userId: String, amount: Int): Try[String]
+  def erase(channelId: String): Try[String]
 }
 
 @Singleton
 class AmountRepositoryImpl @Inject()(underlying: FireStoreClient)(implicit val ec: ExecutionContext)
     extends AmountRepository {
 
-  override def getAll(channelId: String): Future[String] = Future {
-    underlying.find(channelId)
+  override def check(channelId: String): Try[String] =
+    for {
+      amounts <- underlying.find(channelId)
+      ans = show(amounts)
+    } yield ans
+
+  override def charge(channelId: String, userId: String, amount: Int): Try[String] =
+    for {
+      amounts <- underlying.find(channelId)
+      bottom = amounts.values.min
+      tobe = amounts.updatedWith(userId) {
+        case Some(v) => Some(v + amount - bottom)
+        case None => Some(amount) // add new user.
+      }
+      _ <- underlying.update(channelId, tobe)
+    } yield s"Ok, charged ${amount}."
+
+  override def erase(channelId: String): Try[String] =
+    for {
+      amounts <- underlying.find(channelId)
+      tobe = amounts.map { case (k, _) => (k, 0) }
+      _ <- underlying.update(channelId, tobe)
+    } yield "Ok, erased."
+
+  private def show(amounts: Map[String, Int]) = {
+    val bottom = amounts.values.min
+    amounts.foldLeft("## current balance") { (x, m) =>
+      x + "\r" + s"${m._1} => ${m._2 - bottom}"
+    }
   }
-
-  override def store(channelId: String, userId: String, amount: Int): Future[String] = ???
-
-  override def deleteAll(channelId: String): Future[String] = ???
 }

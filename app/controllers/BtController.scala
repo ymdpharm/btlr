@@ -4,7 +4,7 @@ import javax.inject._
 import play.api._
 import play.api.libs.json.Json
 import play.api.mvc._
-import repositories.AmountRepository
+import repositories.{AmountException, AmountRepository}
 import types.SlackRequest
 
 import scala.concurrent.ExecutionContext
@@ -27,35 +27,45 @@ class BtController @Inject()(
   // receive application/x-www-form-urlencoded
   type FormUrlEncoded = Map[String, Seq[String]]
 
-  def postTest: Action[FormUrlEncoded] =
-    Action(parse.formUrlEncoded) { request: Request[FormUrlEncoded] =>
+  def postTest: Action[AnyContent] =
+    Action { request: Request[AnyContent] =>
       info(request)
-      Ok(parseResponse(request.body.mkString(","))).as(JSON)
+      amount
+        .erase("testChannel")
+        .recover(AmountException.recoverToMessage)
+        .map(ans => Ok(parseResponse(ans)).as(JSON))
+        .get
     }
 
   def check: Action[FormUrlEncoded] =
-    Action(parse.formUrlEncoded).async { request: Request[FormUrlEncoded] =>
+    Action(parse.formUrlEncoded) { request: Request[FormUrlEncoded] =>
       info(request)
       amount
-        .getAll(SlackRequest(request).channelId)
+        .check(SlackRequest(request).channelId)
+        .recover(AmountException.recoverToMessage)
         .map(ans => Ok(parseResponse(ans)).as(JSON))
+        .get
     }
 
   def charge: Action[FormUrlEncoded] =
-    Action(parse.formUrlEncoded).async { request: Request[FormUrlEncoded] =>
+    Action(parse.formUrlEncoded) { request: Request[FormUrlEncoded] =>
       info(request)
       val req = SlackRequest(request)
       amount
-        .store(req.channelId, req.userId, req.text.toInt)
+        .charge(req.channelId, req.userId, req.text.toInt)
+        .recover(AmountException.recoverToMessage)
         .map(ans => Ok(parseResponse(ans)).as(JSON))
+        .get
     }
 
   def erase: Action[FormUrlEncoded] =
-    Action(parse.formUrlEncoded).async { request: Request[FormUrlEncoded] =>
+    Action(parse.formUrlEncoded) { request: Request[FormUrlEncoded] =>
       info(request)
       amount
-        .deleteAll(SlackRequest(request).channelId)
+        .erase(SlackRequest(request).channelId)
+        .recover(AmountException.recoverToMessage)
         .map(ans => Ok(parseResponse(ans)).as(JSON))
+        .get
     }
 
   private def info[A](request: Request[A]): Unit =

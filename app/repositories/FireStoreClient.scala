@@ -4,11 +4,14 @@ import com.google.cloud.firestore.Firestore
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
+import scala.util.Try
+
 trait FireStoreClient {
-  def db: Firestore
-  def find(channelId: String): String
-  def update(channelId: String, userId: String, amount: Int): Unit
+  def find(channelId: String): Try[Map[String, Int]]
+  def update(channelId: String, amounts: Map[String, Int]): Try[Unit]
+  def close: Unit
 }
+// close が要る？
 
 @Singleton
 class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClient {
@@ -18,6 +21,8 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
   import com.google.firebase.cloud.FirestoreClient
   import java.io.FileInputStream
   import collection.JavaConverters._
+
+  FirebaseApp.initializeApp(options)
 
   // cloud run で動作するならば catch 不要．
   private lazy val credentials: GoogleCredentials =
@@ -36,22 +41,36 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
     .setProjectId(config.get[String]("backend.project"))
     .build
 
-  FirebaseApp.initializeApp(options)
+  private lazy val db: Firestore = FirestoreClient.getFirestore
 
-  override def db: Firestore = FirestoreClient.getFirestore
+  override def close: Unit = db.close()
 
-  // WIP WIP WIP
-  override def find(channelId: String): String =
-    db.collection("channels")
-      .get()
-      .get()
-      .getDocuments
-      .asScala
-      .toList
-      .head // channelId に
-      .getData
-      .toString
+  override def find(channelId: String): Try[Map[String, Int]] =
+    Try {
+      db.collection("channels")
+        .document(channelId)
+        .get()
+        .get()
+        .getData
+        .asInstanceOf[java.util.HashMap[String, Long]]
+        .asScala
+        .map { case (k, v) => (k, v.toInt) }
+        .toMap
+    }.recover {
+      case _: NullPointerException => throw new AmountException.NoDataException()
+      case e: RuntimeException => throw new AmountException.BackendDBException(e.getMessage)
+    }
 
-  override def update(channelId: String, userId: String, amount: Int): Unit =
-    ???
+  override def update(channelId: String, amounts: Map[String, Int]): Try[Unit] =
+    Try {
+      val doc = db.collection("channels").document(channelId)
+      val data = new java.util.HashMap[String, Long]()
+      amounts.foreach {
+        case (k, v) => data.put(k, v)
+      }
+      doc.set(data).get() // Await
+      ()
+    }.recover {
+      case e: RuntimeException => throw new AmountException.BackendDBException(e.getMessage)
+    }
 }
