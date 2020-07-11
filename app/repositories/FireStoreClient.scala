@@ -58,7 +58,7 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
         .toMap
     }.recover {
       case _: NullPointerException => throw new AmountException.NoDataException()
-      case e: RuntimeException => throw new AmountException.BackendDBException(e.getMessage)
+      case _: RuntimeException => throw new AmountException.BackendDBException()
     }
 
   override def update(channelId: String, amounts: Map[String, Int]): Try[Unit] =
@@ -71,6 +71,6 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
       doc.set(data).get() // Await
       ()
     }.recover {
-      case e: RuntimeException => throw new AmountException.BackendDBException(e.getMessage)
+      case _: RuntimeException => throw new AmountException.BackendDBException()
     }
 }
