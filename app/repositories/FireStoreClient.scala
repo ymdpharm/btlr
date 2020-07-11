@@ -32,7 +32,7 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
 
   override def find(channelId: String): Try[Map[String, Int]] =
     Try {
-      db.collection("channels")
+      db.collection(config.get[String]("backend.collection"))
         .document(channelId)
         .get()
         .get()
@@ -48,7 +48,7 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
 
   override def update(channelId: String, amounts: Map[String, Int]): Try[Unit] =
     Try {
-      val doc = db.collection("channels").document(channelId)
+      val doc = db.collection(config.get[String]("backend.collection")).document(channelId)
       val data = new java.util.HashMap[String, Long]()
       amounts.foreach {
         case (k, v) => data.put(k, v)
