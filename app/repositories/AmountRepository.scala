@@ -30,19 +30,19 @@ class AmountRepositoryImpl @Inject()(underlying: FireStoreClient)(implicit val e
         case None => Some(amount) // add new user.
       }
       _ <- underlying.update(channelId, tobe)
-    } yield s"Ok, charged ${amount}."
+    } yield s"Ok, charged ${amount}. :+1:"
 
   override def erase(channelId: String): Try[String] =
     for {
       amounts <- underlying.find(channelId)
       tobe = amounts.map { case (k, _) => (k, 0) }
       _ <- underlying.update(channelId, tobe)
-    } yield "Ok, erased."
+    } yield "Ok, erased. :+1:"
 
   private def show(amounts: Map[String, Int]) = {
     val bottom = amounts.values.min
-    amounts.foldLeft("## current balance") { (x, m) =>
-      x + "\r" + s"${m._1} => ${m._2 - bottom}"
-    }
+    amounts.foldLeft(":eyes: Current balance is ...\r ```") { (x, m) =>
+      x + "\r" + s"<@${m._1}> => ${m._2 - bottom}"
+    } + "```"
   }
 }
