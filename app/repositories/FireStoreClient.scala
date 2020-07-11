@@ -11,7 +11,6 @@ trait FireStoreClient {
   def update(channelId: String, amounts: Map[String, Int]): Try[Unit]
   def close: Unit
 }
-// close が要る？
 
 @Singleton
 class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClient {
@@ -19,29 +18,15 @@ class FireStoreClientImpl @Inject()(config: Configuration) extends FireStoreClie
   import com.google.firebase.FirebaseApp
   import com.google.firebase.FirebaseOptions
   import com.google.firebase.cloud.FirestoreClient
-  import java.io.FileInputStream
   import collection.JavaConverters._
 
-  FirebaseApp.initializeApp(options)
-
-  // cloud run で動作するならば catch 不要．
-  private lazy val credentials: GoogleCredentials =
-    try { GoogleCredentials.getApplicationDefault } catch {
-      case e =>
-        GoogleCredentials.fromStream(
-          new FileInputStream(
-            "./credentials/kmp00-281812-6003b39c9ffc.json"
-          )
-        )
-    }
-
-  // project config を env から
-  private lazy val options: FirebaseOptions = new FirebaseOptions.Builder()
+  private val credentials: GoogleCredentials = GoogleCredentials.getApplicationDefault
+  private val options: FirebaseOptions = new FirebaseOptions.Builder()
     .setCredentials(credentials)
-    .setProjectId(config.get[String]("backend.project"))
     .build
 
-  private lazy val db: Firestore = FirestoreClient.getFirestore
+  FirebaseApp.initializeApp(options)
+  private val db: Firestore = FirestoreClient.getFirestore
 
   override def close: Unit = db.close()
 
