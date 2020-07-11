@@ -1,8 +1,9 @@
-FROM openjdk:8-jre-alpine
+FROM openjdk:8-jre-slim
+# alpine doesnot work https://github.com/googleapis/google-cloud-java/issues/2740
 
 WORKDIR /app
 
-RUN apk --no-cache add --update \
+RUN apt-get update && apt-get install -y \
       coreutils \
       tzdata
 
