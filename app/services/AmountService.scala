@@ -28,7 +28,7 @@ class AmountServiceImpl @Inject()(underlying: FireStoreClient)(implicit val ec: 
         case Some(v) => Some(v + amount) // incr
         case None => Some(amount) // add new user.
       }
-      bottom = amounts.values.min
+      bottom = added.values.min
       rebalanced = added.map {
         case (k, v) => (k, v - bottom) // fix zero
       }
