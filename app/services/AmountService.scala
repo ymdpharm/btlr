@@ -24,12 +24,15 @@ class AmountServiceImpl @Inject()(underlying: FireStoreClient)(implicit val ec: 
   override def charge(channelId: String, userId: String, amount: Int): Try[String] =
     for {
       amounts <- underlying.find(channelId)
-      bottom = amounts.values.min
-      tobe = amounts.updatedWith(userId) {
-        case Some(v) => Some(v + amount - bottom) // fix zero.
+      added = amounts.updatedWith(userId) {
+        case Some(v) => Some(v + amount) // incr
         case None => Some(amount) // add new user.
       }
-      _ <- underlying.update(channelId, tobe)
+      bottom = amounts.values.min
+      rebalanced = added.map {
+        case (k, v) => (k, v - bottom) // fix zero
+      }
+      _ <- underlying.update(channelId, rebalanced)
     } yield s"Ok, charged ${amount}. :+1:"
 
   override def erase(channelId: String): Try[String] =
