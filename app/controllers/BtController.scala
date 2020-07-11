@@ -21,6 +21,16 @@ class BtController @Inject()(
   // receive application/x-www-form-urlencoded
   type FormUrlEncoded = Map[String, Seq[String]]
 
+  def test: Action[AnyContent] =
+    Action { request: Request[AnyContent] =>
+      info(request)
+      amount
+        .check("testChannel")
+        .recover(AmountException.recoverToMessage)
+        .map(ans => Ok(parseResponse(ans)).as(JSON))
+        .get
+    }
+
   def check: Action[FormUrlEncoded] =
     Action(parse.formUrlEncoded) { request: Request[FormUrlEncoded] =>
       info(request)

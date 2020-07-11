@@ -1,3 +1,5 @@
 POST        /check         controllers.BtController.check
 POST        /erase         controllers.BtController.erase
 POST        /charge        controllers.BtController.charge
+
+POST        /test          controllers.BtController.test
