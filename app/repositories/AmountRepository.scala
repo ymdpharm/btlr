@@ -26,7 +26,7 @@ class AmountRepositoryImpl @Inject()(underlying: FireStoreClient)(implicit val e
       amounts <- underlying.find(channelId)
       bottom = amounts.values.min
       tobe = amounts.updatedWith(userId) {
-        case Some(v) => Some(v + amount - bottom)
+        case Some(v) => Some(v + amount - bottom) // fix zero.
         case None => Some(amount) // add new user.
       }
       _ <- underlying.update(channelId, tobe)
@@ -40,9 +40,8 @@ class AmountRepositoryImpl @Inject()(underlying: FireStoreClient)(implicit val e
     } yield "Ok, erased. :+1:"
 
   private def show(amounts: Map[String, Int]) = {
-    val bottom = amounts.values.min
     amounts.foldLeft(":eyes: Current balance is ...\r ```") { (x, m) =>
-      x + "\r" + s"<@${m._1}> => ${m._2 - bottom}"
+      x + "\r" + s"<@${m._1}> => ${m._2}"
     } + "```"
   }
 }
