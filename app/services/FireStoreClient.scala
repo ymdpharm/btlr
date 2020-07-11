@@ -1,8 +1,9 @@
-package repositories
+package services
 
 import com.google.cloud.firestore.Firestore
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import types.AmountException
 
 import scala.util.Try
 

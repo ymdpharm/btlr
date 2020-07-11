@@ -4,8 +4,8 @@ import javax.inject._
 import play.api._
 import play.api.libs.json.Json
 import play.api.mvc._
-import repositories.{AmountException, AmountRepository}
-import types.SlackRequest
+import services.AmountService
+import types.{AmountException, SlackRequest}
 
 import scala.concurrent.ExecutionContext
 
@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext
 class BtController @Inject()(
     val controllerComponents: ControllerComponents,
     config: Configuration,
-    amount: AmountRepository
+    amount: AmountService
 )(implicit val ec: ExecutionContext)
     extends BaseController
     with play.api.Logging {

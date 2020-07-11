@@ -1,4 +1,4 @@
-package repositories
+package types
 
 sealed class AmountException(msg: String) extends Exception(msg)
 

@@ -1,19 +1,19 @@
-package repositories
+package services
 
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-trait AmountRepository {
+trait AmountService {
   def check(channelId: String): Try[String]
   def charge(channelId: String, userId: String, amount: Int): Try[String]
   def erase(channelId: String): Try[String]
 }
 
 @Singleton
-class AmountRepositoryImpl @Inject()(underlying: FireStoreClient)(implicit val ec: ExecutionContext)
-    extends AmountRepository {
+class AmountServiceImpl @Inject()(underlying: FireStoreClient)(implicit val ec: ExecutionContext)
+    extends AmountService {
 
   override def check(channelId: String): Try[String] =
     for {
