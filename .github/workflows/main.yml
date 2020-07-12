@@ -4,6 +4,9 @@ on:
   push:
     branches: master
 
+env:
+  IMAGE: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/btlr:${{ github.sha }}
+
 jobs:
   build_deploy:
     runs-on: ubuntu-18.04
@@ -25,6 +28,18 @@ jobs:
     - run: |
         sbt assembly
         gcloud auth configure-docker
-        docker build -t asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/btlr:${{ github.sha }} ./
-        docker push asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/btlr:${{ github.sha }} 
+        docker build -t ${IMAGE} ./
+        docker push ${IMAGE} 
       
+    - run: |
+        gcloud run deploy btlr \
+           --image=${IMAGE} \
+           --cpu=1 \
+           --max-instances=2 \
+           --memory=512Mi \
+           --platform=managed \
+           --port=9000 \
+           --service-account=${{ secrets.GCP_SA }} \
+           --region=asia-northeast1 \
+           --set-env-vars APPLICATION_SECRET=${{ secrets.APPLICATION_SECRET }}
+            
