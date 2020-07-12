@@ -40,6 +40,5 @@ jobs:
            --platform=managed \
            --port=9000 \
            --service-account=${{ secrets.GCP_SA }} \
-           --region=asia-northeast1 \
-           --set-env-vars APPLICATION_SECRET=`${{ secrets.APPLICATION_SECRET }}`
+           --region=asia-northeast1 
             
