@@ -1,4 +1,6 @@
-## btlr
+## btlr 
+![](https://github.com/ymdpharm/btlr/workflows/CI/badge.svg)
+
 Play 2.8 study, with Scala 2.13.3.
 
 - required
@@ -13,8 +15,5 @@ Play 2.8 study, with Scala 2.13.3.
 - Cloud Run が 0 までスケールインすると Slack App が timeout してきつい
     - cron (https://cloud.google.com/scheduler) で疑似トラフィック作って回避
     - minimum scale 指定できるようになるっぽいので信じて待つ
-- Deploy Flow
-    - credential どう扱っていいのかわからないからとりあえず手動
-    - GitHub Actions であそぶ
 - Test
     - kaku.
