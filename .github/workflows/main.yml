@@ -41,5 +41,5 @@ jobs:
            --port=9000 \
            --service-account=${{ secrets.GCP_SA }} \
            --region=asia-northeast1 \
-           --set-env-vars APPLICATION_SECRET=${{ secrets.APPLICATION_SECRET }}
+           --set-env-vars APPLICATION_SECRET=`${{ secrets.APPLICATION_SECRET }}`
             
