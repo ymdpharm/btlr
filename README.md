@@ -5,7 +5,7 @@ Play 2.8 study, with Scala 2.13.3.
 
 - request
     - Slack App -> API server on Cloud Run -> Firestore
-- GitHub Sectets
+- GitHub Secrets
     - ${APPLICATION_SECRET} (for Play conf)
     - ${GCP_PROJECT_ID} 
     - ${GCP_SA}
