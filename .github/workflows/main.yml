@@ -15,20 +15,16 @@ jobs:
       with:
         java-version: 1.8
 
-    - run: sbt assembly
-    
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '290.0.1'
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
-    - run: gcloud info
-    - run: gcloud auth configure-docker
-  
-    - uses: docker/build-push-action@v1.1.0
-      with:
-        registry: asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}
-        repository: btlr
-        tags: ${{ github.sha }}
-        push: true
+
+    - run: |
+        sbt assembly
+        gcloud auth configure-docker
+        docker build -t asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/btlr:${{ github.sha }} ./
+        docker push asia.gcr.io/${{ secrets.GCP_PROJECT_ID }}/btlr:${{ github.sha }} 
+      
