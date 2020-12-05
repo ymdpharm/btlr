@@ -46,7 +46,7 @@ class BtController @Inject()(
       info(request)
       val req = SlackRequest(request)
       amount
-        .charge(req.channelId, req.userId, req.text.toInt)
+        .charge(req.channelId, req.userId, extractVal(req.text))
         .recover(AmountException.recoverToMessage)
         .map(ans => Ok(parseResponse(ans)).as(JSON))
         .get
@@ -79,4 +79,7 @@ class BtController @Inject()(
       )
     )
   }
+
+  private def extractVal(text: String): Int =
+    text.replaceAll("[^0-9]", "").toInt
 }
